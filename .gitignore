@@ -1,7 +1,0 @@
-vscode/
-*.env
-testing/
-*.nc
-*.grib
-.gitignore
-.vscode/
