@@ -1,6 +1,15 @@
 import xarray as xr
 import os
 import glob
+import zipfile
+
+def unzip_folder(zip_path, extract_path):
+    """
+    Décompresse un fichier zip dans le dossier extract_path
+    """
+    with zipfile.ZipFile(zip_path, 'r') as zipf:
+        zipf.extractall(extract_path)
+
 
 
 # toujours utiliser multi_grib2_to_netcdf pour separer les variables en différents fichiers grib2
@@ -35,7 +44,8 @@ def multi_grib2_to_netcdf(grib2_path, ncdff_path=None, merge=False):
     if ncdff_path is None:
         ncdff_path = grib2_path
 
-    
+    nc_filename = os.path.basename(os.path.normpath(grib2_path)).split("_")[0]
+
     if merge:
         l_f = glob.glob(os.path.join(grib2_path, "*.grb2"))
         datasets = []
@@ -61,7 +71,7 @@ def multi_grib2_to_netcdf(grib2_path, ncdff_path=None, merge=False):
         
         # Fusionner tous les datasets
         merged_ds = xr.merge(datasets)
-        output_file = os.path.join(ncdff_path, 'all_variables.nc')
+        output_file = os.path.join(ncdff_path, nc_filename+'.nc')
         merged_ds.to_netcdf(output_file)
         
         print(f"\n✅ Variables fusionnées: {list(merged_ds.data_vars)}")
@@ -96,6 +106,7 @@ def multi_grib2_to_netcdf(grib2_path, ncdff_path=None, merge=False):
 if __name__ == "__main__":
     # for f in glob.glob("testing/DATA_test/*.grb2"):
     #     print(f)
-    output_path = "/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/"
-    f="/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/test_grib/"
+    unzip_folder("/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/sea/test_grib.zip", "/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/sea/test_grib")
+    output_path = "/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/sea/"
+    f="/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/sea/test_grib/"
     multi_grib2_to_netcdf(f, output_path, merge=True)

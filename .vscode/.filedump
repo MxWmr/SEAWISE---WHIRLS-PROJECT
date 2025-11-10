@@ -1,6 +1,6 @@
 
 		begin
-      f = addfile("/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/all_variables.nc","r")
+      f = addfile("/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/sea/test.nc","r")
       print(f)
 		end
     

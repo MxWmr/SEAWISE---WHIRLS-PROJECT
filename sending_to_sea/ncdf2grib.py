@@ -5,7 +5,7 @@ import glob
 import xarray as xr
 import subprocess
 import os
-
+import zipfile
 
 def convert_nc_variables_to_grib2_cdo(nc_path, output_dir=None):
 
@@ -46,6 +46,24 @@ def convert_nc_variables_to_grib2_cdo(nc_path, output_dir=None):
 
 
 
+def zip_folder(folder_path, zip_path):
+    """
+    Compresse un dossier (folder_path) en un fichier zip (zip_path)
+    """
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                # Chemin relatif pour éviter d'inclure le chemin complet
+                arcname = os.path.relpath(file_path, start=folder_path)
+                zipf.write(file_path, arcname)
+
+
+
+
 if __name__ == "__main__":
-    f = "/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/test.nc"
+    f = "/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/land/test.nc"
     convert_nc_variables_to_grib2_cdo(f)
+    repo_to_zip = "/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/land/test_grib"
+    zipped_repo = repo_to_zip+".zip"
+    zip_folder(repo_to_zip,zipped_repo)

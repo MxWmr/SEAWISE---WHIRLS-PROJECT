@@ -6,7 +6,7 @@ from email import encoders
 import os
 from dotenv import load_dotenv
 from pathlib import Path
-
+import zipfile
 # Charger les identifiants depuis un fichier .env
 dotenv_path = Path('credentials.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -39,6 +39,19 @@ def send_email(to_email, subject, body):
 #     "Bonjour, ceci est un test d'envoi automatique depuis mon adresse institutionnelle."
 # )
 
+
+
+def zip_folder(folder_path, zip_path):
+    """
+    Compresse un dossier (folder_path) en un fichier zip (zip_path)
+    """
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                # Chemin relatif pour éviter d'inclure le chemin complet
+                arcname = os.path.relpath(file_path, start=folder_path)
+                zipf.write(file_path, arcname)
 
 
 
@@ -74,10 +87,13 @@ def send_email_with_attachment(to_email, subject, body, file_path):
     except Exception as e:
         print("❌ Erreur :", e)
 
+
+zipped_repo = "/home/maxw/Documents/SATELLITE/CODES/testing/DATA_test/land/test_grib.zip"
+
 # Exemple d'utilisation
 send_email_with_attachment(
     "maximilien.wemaere@gmail.com",
     "Test avec PJ",
     "Bonjour, voici un test avec pièce jointe.",
-    "send_mail_mg.py"  # chemin vers ton fichier
+    zipped_repo  # chemin vers ton fichier
 )
